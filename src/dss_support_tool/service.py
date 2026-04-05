@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from pathlib import Path
+
 from fastapi import FastAPI
 from fastapi.exceptions import HTTPException
 from fastapi.responses import FileResponse, JSONResponse
@@ -39,6 +41,8 @@ def create_app(
         return {
             "app": DEFAULT_CONFIG.app_name,
             "baseUrl": DEFAULT_CONFIG.base_url,
+            "httpsBaseUrl": DEFAULT_CONFIG.secure_base_url,
+            "httpsCaCertificatePath": str(Path.home() / "AppData" / "Local" / "DSS Support Tool" / "certs" / "localhost-ca.pem") if DEFAULT_CONFIG.https_enabled else None,
             "frontend": _frontend_status(frontend),
             "crafting": _attempt(service.get_crafting_index),
             "resources": _attempt(service.get_resource_index),

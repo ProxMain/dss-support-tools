@@ -33,11 +33,19 @@ class FrontendAssets:
 class AppConfig:
     host: str = os.environ.get("DSS_SUPPORT_HOST", "127.0.0.1")
     port: int = int(os.environ.get("DSS_SUPPORT_PORT", "8765"))
+    https_enabled: bool = os.environ.get("DSS_SUPPORT_HTTPS_ENABLED", "1").strip().lower() not in {"0", "false", "no"}
+    https_port: int = int(os.environ.get("DSS_SUPPORT_HTTPS_PORT", "8766"))
     app_name: str = "DSS Support Tool"
 
     @property
     def base_url(self) -> str:
         return f"http://{self.host}:{self.port}"
+
+    @property
+    def secure_base_url(self) -> str | None:
+        if not self.https_enabled:
+            return None
+        return f"https://{self.host}:{self.https_port}"
 
 
 def build_default_paths() -> AppPaths:

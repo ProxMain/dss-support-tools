@@ -3,6 +3,7 @@ from __future__ import annotations
 import sys
 from ctypes import wintypes
 import ctypes
+from pathlib import Path
 
 from PySide6.QtCore import QTimer, Qt, QUrl
 from PySide6.QtGui import QAction, QColor, QGuiApplication, QIcon, QPainter, QPixmap
@@ -28,7 +29,23 @@ class SingleInstanceGuard:
             self.handle = None
 
 
+def _icon_file() -> Path:
+    package_root = Path(__file__).resolve().parent
+    packaged_icon = package_root / "assets" / "app-icon.png"
+    if packaged_icon.exists():
+        return packaged_icon
+
+    workspace_icon = package_root.parent.parent / "img" / "space-seals-app-icon.png"
+    return workspace_icon
+
+
 def _app_icon() -> QIcon:
+    icon_file = _icon_file()
+    if icon_file.exists():
+        icon = QIcon(str(icon_file))
+        if not icon.isNull():
+            return icon
+
     pixmap = QPixmap(64, 64)
     pixmap.fill(Qt.GlobalColor.transparent)
 

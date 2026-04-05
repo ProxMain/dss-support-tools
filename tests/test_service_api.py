@@ -27,6 +27,9 @@ def test_status_reports_dataset_errors(app_paths) -> None:
     assert payload["crafting"]["ok"] is False
     assert payload["resources"]["ok"] is False
     assert payload["frontend"]["placeholder"] is True
+    assert payload["baseUrl"].startswith("http://")
+    assert payload["httpsBaseUrl"].startswith("https://")
+    assert payload["httpsCaCertificatePath"].endswith("localhost-ca.pem")
 
 
 def test_api_returns_resource_family_details(app_paths, sample_resource_payload) -> None:
