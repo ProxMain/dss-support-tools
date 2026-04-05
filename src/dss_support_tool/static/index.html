@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>DSS Support Tool</title>
+    <style>
+      :root {
+        color-scheme: dark;
+        --bg: #08111c;
+        --panel: #102031;
+        --panel-2: #16324a;
+        --text: #e8f2fb;
+        --muted: #9fb4c8;
+        --accent: #5eead4;
+        --accent-2: #fbbf24;
+      }
+      body {
+        margin: 0;
+        font-family: "Segoe UI", system-ui, sans-serif;
+        background: radial-gradient(circle at top left, #113652, transparent 30%), var(--bg);
+        color: var(--text);
+      }
+      main {
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 32px 20px 48px;
+      }
+      .hero, .panel {
+        background: linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.02));
+        border: 1px solid rgba(255,255,255,0.08);
+        border-radius: 24px;
+      }
+      .hero {
+        padding: 28px;
+      }
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 16px;
+        margin-top: 20px;
+      }
+      .panel {
+        padding: 20px;
+      }
+      .eyebrow {
+        font-size: 11px;
+        letter-spacing: 0.24em;
+        text-transform: uppercase;
+        color: var(--accent);
+      }
+      h1 {
+        margin: 12px 0 8px;
+        font-size: 40px;
+      }
+      p, li {
+        color: var(--muted);
+        line-height: 1.6;
+      }
+      code {
+        color: var(--accent-2);
+      }
+      a {
+        color: var(--accent);
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <section class="hero">
+        <div class="eyebrow">DSS Support Tool</div>
+        <h1>Python desktop + local webservice scaffold</h1>
+        <p>
+          This is the Python-first successor to <code>langpack-browser</code>. It is intended to
+          run as a local desktop tool, adjacent tray utility, and localhost webservice.
+        </p>
+      </section>
+      <section class="grid">
+        <article class="panel">
+          <div class="eyebrow">Service</div>
+          <p>Health: <a href="/api/health">/api/health</a></p>
+          <p>Status: <a href="/api/status">/api/status</a></p>
+        </article>
+        <article class="panel">
+          <div class="eyebrow">Crafting</div>
+          <p>Snapshot-backed crafting summary: <a href="/api/crafting">/api/crafting</a></p>
+        </article>
+        <article class="panel">
+          <div class="eyebrow">Resources</div>
+          <p>Snapshot-backed resource summary: <a href="/api/resources">/api/resources</a></p>
+        </article>
+      </section>
+    </main>
+  </body>
+  </html>
+
