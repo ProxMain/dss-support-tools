@@ -2,10 +2,14 @@ from __future__ import annotations
 
 from typing import Any
 
+from dss_support_tool.application.trading_catalog import build_trading_family
 from dss_support_tool.infrastructure.snapshot_repository import SnapshotSummary
 
 
-def build_resource_data(snapshot: SnapshotSummary) -> dict[str, Any]:
+def build_resource_data(
+    snapshot: SnapshotSummary,
+    trading_snapshot: SnapshotSummary | None = None,
+) -> dict[str, Any]:
     payload = snapshot.payload or {}
     group_map = {
         str(group.get("id")): group
@@ -85,16 +89,8 @@ def build_resource_data(snapshot: SnapshotSummary) -> dict[str, Any]:
         )
         family["resources"] = sorted(family["resources"], key=lambda item: str(item.get("name") or ""))
 
-    grouped_families.setdefault(
-        "trading",
-        {
-            "id": "trading",
-            "label": "Trading",
-            "summary": "Trading routes and commodity prices are planned, but the source import is not wired yet.",
-            "groups": [],
-            "resources": [],
-        },
-    )
+    if trading_snapshot is not None:
+        grouped_families["trading"] = build_trading_family(trading_snapshot)
 
     families = sorted(grouped_families.values(), key=lambda item: str(item.get("label") or ""))
     return {

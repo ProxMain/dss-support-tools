@@ -26,3 +26,19 @@ def test_catalog_service_builds_resource_index(app_paths, sample_resource_payloa
     assert payload["version"] == "mining-v1"
     assert payload["resourceCount"] == 1
     assert payload["families"][0]["id"] == "mining"
+
+
+def test_catalog_service_appends_trading_family_when_snapshot_exists(
+    app_paths,
+    sample_resource_payload,
+    sample_trading_payload,
+) -> None:
+    write_json(app_paths.scraper_data_root / "normalized-scmdb-mining-test.json", sample_resource_payload)
+    write_json(app_paths.scraper_data_root / "normalized-sc-trade-test.json", sample_trading_payload)
+    service = CatalogService(SnapshotRepository(app_paths))
+
+    payload = service.get_resource_index()
+
+    trading_family = next(family for family in payload["families"] if family["id"] == "trading")
+    assert trading_family["resourceCount"] == 1
+    assert trading_family["groupCount"] >= 1

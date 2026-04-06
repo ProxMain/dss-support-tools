@@ -2,6 +2,8 @@
 
 Python-first scaffold for a Windows desktop + local webservice support tool based on the `langpack-browser` prototype.
 
+Release history is tracked in [CHANGELOG.md](C:/dev/StarCitizen/tools/dss-support-tool/CHANGELOG.md).
+
 ## Included pieces
 
 - FastAPI local webservice

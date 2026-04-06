@@ -7,41 +7,42 @@
     <style>
       :root {
         color-scheme: dark;
-        --bg: #08111c;
-        --panel: #102031;
-        --panel-2: #16324a;
+        --bg: #071019;
+        --panel: rgba(12, 30, 47, 0.92);
+        --panel-strong: rgba(17, 42, 65, 0.96);
+        --line: rgba(255, 255, 255, 0.08);
         --text: #e8f2fb;
-        --muted: #9fb4c8;
-        --accent: #5eead4;
-        --accent-2: #fbbf24;
+        --muted: #9bb0c3;
+        --accent: #65e7d2;
+        --accent-2: #f0b34f;
+        --danger: #ff7f7f;
+      }
+      * {
+        box-sizing: border-box;
       }
       body {
         margin: 0;
         font-family: "Segoe UI", system-ui, sans-serif;
-        background: radial-gradient(circle at top left, #113652, transparent 30%), var(--bg);
+        background:
+          radial-gradient(circle at top left, rgba(78, 163, 214, 0.2), transparent 30%),
+          radial-gradient(circle at bottom right, rgba(101, 231, 210, 0.12), transparent 25%),
+          var(--bg);
         color: var(--text);
       }
       main {
-        max-width: 1100px;
+        max-width: 1180px;
         margin: 0 auto;
-        padding: 32px 20px 48px;
+        padding: 32px 20px 56px;
       }
-      .hero, .panel {
-        background: linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.02));
-        border: 1px solid rgba(255,255,255,0.08);
+      .hero,
+      .panel {
+        background: linear-gradient(180deg, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0.02));
+        border: 1px solid var(--line);
         border-radius: 24px;
+        backdrop-filter: blur(10px);
       }
       .hero {
         padding: 28px;
-      }
-      .grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-        gap: 16px;
-        margin-top: 20px;
-      }
-      .panel {
-        padding: 20px;
       }
       .eyebrow {
         font-size: 11px;
@@ -49,19 +50,124 @@
         text-transform: uppercase;
         color: var(--accent);
       }
-      h1 {
-        margin: 12px 0 8px;
-        font-size: 40px;
+      h1,
+      h2,
+      h3,
+      p {
+        margin-top: 0;
       }
-      p, li {
+      h1 {
+        margin: 12px 0 10px;
+        font-size: clamp(2.2rem, 4vw, 3.3rem);
+      }
+      p,
+      li,
+      dd,
+      dt {
         color: var(--muted);
         line-height: 1.6;
+      }
+      a {
+        color: var(--accent);
       }
       code {
         color: var(--accent-2);
       }
-      a {
-        color: var(--accent);
+      .grid {
+        display: grid;
+        gap: 16px;
+        margin-top: 20px;
+      }
+      .grid.metrics {
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      }
+      .grid.columns {
+        grid-template-columns: minmax(0, 1.2fr) minmax(0, 0.8fr);
+        align-items: start;
+      }
+      .panel {
+        padding: 20px;
+      }
+      .metric-value {
+        font-size: 2rem;
+        font-weight: 700;
+        color: var(--text);
+        margin: 8px 0 6px;
+      }
+      .metric-label {
+        font-size: 0.95rem;
+      }
+      .metric-note {
+        font-size: 0.9rem;
+      }
+      .tag {
+        display: inline-flex;
+        align-items: center;
+        border: 1px solid rgba(101, 231, 210, 0.26);
+        border-radius: 999px;
+        padding: 6px 10px;
+        margin: 6px 8px 0 0;
+        color: var(--text);
+        background: rgba(101, 231, 210, 0.08);
+        font-size: 0.9rem;
+      }
+      .list {
+        display: grid;
+        gap: 10px;
+        margin: 0;
+        padding: 0;
+        list-style: none;
+      }
+      .list-item {
+        display: flex;
+        justify-content: space-between;
+        gap: 12px;
+        padding: 10px 0;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      }
+      .list-item:last-child {
+        border-bottom: 0;
+      }
+      .list-item strong {
+        color: var(--text);
+      }
+      .status-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        border-radius: 999px;
+        padding: 7px 12px;
+        background: rgba(101, 231, 210, 0.08);
+        border: 1px solid rgba(101, 231, 210, 0.22);
+        color: var(--text);
+        font-size: 0.9rem;
+      }
+      .status-pill.error {
+        background: rgba(255, 127, 127, 0.08);
+        border-color: rgba(255, 127, 127, 0.22);
+      }
+      .empty {
+        color: var(--muted);
+        font-style: italic;
+      }
+      .small {
+        font-size: 0.9rem;
+      }
+      .api-links {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+      }
+      .api-links a {
+        text-decoration: none;
+      }
+      .mono {
+        font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      }
+      @media (max-width: 900px) {
+        .grid.columns {
+          grid-template-columns: 1fr;
+        }
       }
     </style>
   </head>
@@ -69,28 +175,204 @@
     <main>
       <section class="hero">
         <div class="eyebrow">DSS Support Tool</div>
-        <h1>Python desktop + local webservice scaffold</h1>
+        <h1>Snapshot-driven workstation for crafting, resources, and trading.</h1>
         <p>
-          This is the Python-first successor to <code>langpack-browser</code>. It is intended to
-          run as a local desktop tool, adjacent tray utility, and localhost webservice.
+          This local service now surfaces the SC Trade commodity import alongside the existing
+          crafting and mining datasets. The dashboard below reads the live API that the desktop
+          app and browser views consume.
         </p>
+        <div class="api-links">
+          <a class="status-pill" href="/">Primary Frontend</a>
+          <a class="status-pill" href="/api/status">Status API</a>
+          <a class="status-pill" href="/api/crafting">Crafting API</a>
+          <a class="status-pill" href="/api/resources">Resources API</a>
+          <a class="status-pill" href="/api/resources/trading">Trading Family API</a>
+        </div>
       </section>
-      <section class="grid">
+
+      <section class="grid metrics" id="metrics">
         <article class="panel">
           <div class="eyebrow">Service</div>
-          <p>Health: <a href="/api/health">/api/health</a></p>
-          <p>Status: <a href="/api/status">/api/status</a></p>
+          <div class="metric-value">...</div>
+          <p class="metric-label">Loading status</p>
         </article>
+      </section>
+
+      <section class="grid columns">
         <article class="panel">
-          <div class="eyebrow">Crafting</div>
-          <p>Snapshot-backed crafting summary: <a href="/api/crafting">/api/crafting</a></p>
+          <div class="eyebrow">Trading</div>
+          <h2 id="trading-title">Trading family</h2>
+          <p id="trading-summary">Loading trading summary...</p>
+          <div id="trading-groups"></div>
+          <h3>Top commodities</h3>
+          <ul class="list" id="trading-top">
+            <li class="empty">Loading commodity coverage...</li>
+          </ul>
         </article>
+
         <article class="panel">
-          <div class="eyebrow">Resources</div>
-          <p>Snapshot-backed resource summary: <a href="/api/resources">/api/resources</a></p>
+          <div class="eyebrow">Datasets</div>
+          <h2>Family coverage</h2>
+          <ul class="list" id="family-list">
+            <li class="empty">Loading families...</li>
+          </ul>
+          <h3>Notes</h3>
+          <p class="small">
+            Trading currently uses the public SC Trade snapshot. Token-gated shop transactions and
+            route solving are intentionally excluded from this phase.
+          </p>
         </article>
       </section>
     </main>
-  </body>
-  </html>
 
+    <script>
+      async function requestJson(url) {
+        const response = await fetch(url);
+        if (!response.ok) {
+          throw new Error(`${response.status} ${response.statusText} for ${url}`);
+        }
+        return response.json();
+      }
+
+      function metricCard(title, value, note, error = false) {
+        return `
+          <article class="panel">
+            <div class="eyebrow">${title}</div>
+            <div class="metric-value">${value}</div>
+            <p class="metric-note${error ? " mono" : ""}">${note}</p>
+          </article>
+        `;
+      }
+
+      function renderMetrics(status, resources, tradingFamily) {
+        const metrics = document.getElementById("metrics");
+        const resourceSummary = status.resources?.ok ? status.resources : null;
+        metrics.innerHTML = [
+          metricCard("Service", "Online", status.baseUrl || "Local API reachable"),
+          metricCard(
+            "Trading Commodities",
+            tradingFamily?.resourceCount ?? "0",
+            tradingFamily?.summary || "Trading snapshot unavailable",
+            !tradingFamily,
+          ),
+          metricCard(
+            "Resource Families",
+            resourceSummary?.families?.length ?? "0",
+            resourceSummary?.updatedFrom || status.resources?.error || "No resource snapshot",
+            !resourceSummary,
+          ),
+          metricCard(
+            "Frontend",
+            status.frontend?.placeholder ? "Placeholder" : "Bundled",
+            status.frontend?.path || "Unknown frontend path",
+          ),
+        ].join("");
+      }
+
+      function renderFamilies(resources) {
+        const familyList = document.getElementById("family-list");
+        const families = resources?.families || [];
+        if (!families.length) {
+          familyList.innerHTML = '<li class="empty">No family data available.</li>';
+          return;
+        }
+        familyList.innerHTML = families
+          .map(
+            (family) => `
+              <li class="list-item">
+                <div>
+                  <strong>${family.label}</strong>
+                  <div class="small">${family.summary}</div>
+                </div>
+                <div class="small">${family.resourceCount} resources / ${family.groupCount} groups</div>
+              </li>
+            `,
+          )
+          .join("");
+      }
+
+      function renderTrading(trading) {
+        const title = document.getElementById("trading-title");
+        const summary = document.getElementById("trading-summary");
+        const groups = document.getElementById("trading-groups");
+        const top = document.getElementById("trading-top");
+
+        if (!trading) {
+          title.textContent = "Trading family unavailable";
+          summary.textContent = "The trading snapshot is not currently loaded.";
+          groups.innerHTML = '<span class="status-pill error">Trading snapshot missing</span>';
+          top.innerHTML = '<li class="empty">No trading resources available.</li>';
+          return;
+        }
+
+        title.textContent = `${trading.label} family`;
+        summary.textContent = trading.summary;
+        groups.innerHTML = (trading.groups || [])
+          .map((group) => `<span class="tag">${group.label}: ${group.resourceCount}</span>`)
+          .join("");
+
+        const topResources = [...(trading.resources || [])]
+          .sort((left, right) => {
+            const leftListings = Number(left?.stats?.crowdsourceListingCount || 0);
+            const rightListings = Number(right?.stats?.crowdsourceListingCount || 0);
+            if (rightListings !== leftListings) {
+              return rightListings - leftListings;
+            }
+            return String(left?.name || "").localeCompare(String(right?.name || ""));
+          })
+          .slice(0, 8);
+
+        if (!topResources.length) {
+          top.innerHTML = '<li class="empty">No trading commodities available.</li>';
+          return;
+        }
+
+        top.innerHTML = topResources
+          .map((resource) => {
+            const listingCount = resource?.stats?.crowdsourceListingCount || 0;
+            const locationCount = resource?.locationCount || 0;
+            return `
+              <li class="list-item">
+                <div>
+                  <strong>${resource.name}</strong>
+                  <div class="small">${locationCount} locations</div>
+                </div>
+                <div class="small">${listingCount} listings</div>
+              </li>
+            `;
+          })
+          .join("");
+      }
+
+      async function loadDashboard() {
+        try {
+          const [status, resources] = await Promise.all([
+            requestJson("/api/status"),
+            requestJson("/api/resources"),
+          ]);
+          const tradingFamily = resources.families?.find((family) => family.id === "trading") || null;
+          renderMetrics(status, resources, tradingFamily);
+          renderFamilies(resources);
+
+          if (tradingFamily) {
+            const tradingDetail = await requestJson("/api/resources/trading");
+            renderTrading(tradingDetail);
+          } else {
+            renderTrading(null);
+          }
+        } catch (error) {
+          document.getElementById("metrics").innerHTML = metricCard(
+            "Service",
+            "Error",
+            error instanceof Error ? error.message : String(error),
+            true,
+          );
+          renderFamilies(null);
+          renderTrading(null);
+        }
+      }
+
+      loadDashboard();
+    </script>
+  </body>
+</html>

@@ -18,9 +18,10 @@ def create_app(
     catalog_service: CatalogService | None = None,
     paths: AppPaths = DEFAULT_PATHS,
 ) -> FastAPI:
-    app = FastAPI(title="DSS Support Tool", version="0.1.0")
+    app = FastAPI(title="DSS Support Tool", version="0.2.0")
     service = catalog_service or CatalogService(SnapshotRepository(paths))
     frontend = resolve_frontend_assets(paths)
+    dashboard_dir = paths.static_root
 
     @app.exception_handler(SnapshotLoadError)
     async def snapshot_error_handler(_, exc: SnapshotLoadError) -> JSONResponse:
@@ -71,6 +72,31 @@ def create_app(
             if family["id"] == family_id:
                 return {"updatedFrom": payload["updatedFrom"], **family}
         raise HTTPException(status_code=404, detail="Resource family not found")
+
+    @app.get("/api/trading")
+    def trading() -> dict[str, object]:
+        return service.get_trading_overview()
+
+    @app.get("/api/trading/routes")
+    def trading_routes(
+        shipId: str,
+        budget: float,
+        usableScu: float | None = None,
+        maxResults: int = 20,
+    ) -> dict[str, object]:
+        try:
+            return service.get_trading_routes(
+                ship_id=shipId,
+                budget=budget,
+                usable_scu=usableScu,
+                max_results=maxResults,
+            )
+        except ValueError as exc:
+            raise HTTPException(status_code=400, detail=str(exc)) from exc
+
+    @app.get("/dashboard")
+    def dashboard() -> FileResponse:
+        return FileResponse(dashboard_dir / "index.html")
 
     @app.get("/")
     def index() -> FileResponse:

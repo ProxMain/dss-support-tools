@@ -36,3 +36,17 @@ def test_repository_picks_latest_snapshot(app_paths, sample_crafting_payload) ->
 
     assert snapshot.version == "new"
     assert snapshot.path == latest_path
+
+
+def test_repository_loads_latest_trading_snapshot(app_paths, sample_trading_payload) -> None:
+    old_path = app_paths.scraper_data_root / "normalized-sc-trade-old.json"
+    latest_path = app_paths.scraper_data_root / "normalized-sc-trade-new.json"
+    write_json(old_path, {**sample_trading_payload, "apiVersion": "10.0.0"})
+    write_json(latest_path, sample_trading_payload)
+
+    repository = SnapshotRepository(app_paths)
+
+    snapshot = repository.load_trading_snapshot()
+
+    assert snapshot.version == "11.0.0"
+    assert snapshot.path == latest_path
