@@ -5,8 +5,10 @@ from pathlib import Path
 from typing import Any, Callable
 
 from dss_support_tool.application.crafting_catalog import build_crafting_data, build_crafting_index
+from dss_support_tool.application.mining_ship_catalog import build_mining_ship_detail, build_mining_ship_index
 from dss_support_tool.application.resource_catalog import build_resource_data, build_resource_index
 from dss_support_tool.application.trading_planner import build_trading_overview, build_trading_routes
+from dss_support_tool.errors import SnapshotNotFoundError
 from dss_support_tool.infrastructure.snapshot_repository import SnapshotRepository
 
 
@@ -20,12 +22,21 @@ class CatalogService:
     def __init__(self, repository: SnapshotRepository) -> None:
         self._repository = repository
         self._crafting_cache: _CacheEntry | None = None
+        self._mining_ship_cache: _CacheEntry | None = None
         self._resource_cache: _CacheEntry | None = None
         self._trading_cache: _CacheEntry | None = None
 
     def get_crafting_data(self) -> dict[str, Any]:
         snapshot = self._repository.load_crafting_snapshot()
-        self._crafting_cache = self._refresh_cache(self._crafting_cache, [snapshot.path], lambda: build_crafting_data(snapshot))
+        try:
+            mining_snapshot = self._repository.load_resource_snapshot()
+        except SnapshotNotFoundError:
+            mining_snapshot = None
+        self._crafting_cache = self._refresh_cache(
+            self._crafting_cache,
+            [snapshot.path, mining_snapshot.path] if mining_snapshot else [snapshot.path],
+            lambda: build_crafting_data(snapshot, mining_snapshot),
+        )
         return self._crafting_cache.value
 
     def get_crafting_index(self) -> dict[str, Any]:
@@ -43,6 +54,32 @@ class CatalogService:
 
     def get_resource_index(self) -> dict[str, Any]:
         return build_resource_index(self.get_resource_data())
+
+    def get_mining_ship_index(self) -> dict[str, Any]:
+        snapshot = self._repository.load_resource_snapshot()
+        self._mining_ship_cache = self._refresh_cache(
+            self._mining_ship_cache,
+            [snapshot.path],
+            lambda: build_mining_ship_index(snapshot),
+        )
+        return self._mining_ship_cache.value
+
+    def get_mining_ship_detail(self, ship_id: str, resource_name: str | None = None) -> dict[str, Any]:
+        snapshot = self._repository.load_resource_snapshot()
+        self._mining_ship_cache = self._refresh_cache(
+            self._mining_ship_cache,
+            [snapshot.path],
+            lambda: build_mining_ship_index(snapshot),
+        )
+        payload = build_mining_ship_detail(snapshot, ship_id, resource_name)
+        if payload is None:
+            raise ValueError(f"Unknown mining ship '{ship_id}'")
+        return {
+            "updatedFrom": self._mining_ship_cache.value["updatedFrom"],
+            "version": self._mining_ship_cache.value.get("version"),
+            "path": self._mining_ship_cache.value.get("path"),
+            **payload,
+        }
 
     def get_trading_overview(self) -> dict[str, Any]:
         snapshot = self._repository.load_trading_snapshot()

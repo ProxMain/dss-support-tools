@@ -73,6 +73,17 @@ def create_app(
                 return {"updatedFrom": payload["updatedFrom"], **family}
         raise HTTPException(status_code=404, detail="Resource family not found")
 
+    @app.get("/api/mining-ships")
+    def mining_ships() -> dict[str, object]:
+        return service.get_mining_ship_index()
+
+    @app.get("/api/mining-ships/{ship_id}")
+    def mining_ship_detail(ship_id: str, resource: str | None = None) -> dict[str, object]:
+        try:
+            return service.get_mining_ship_detail(ship_id, resource)
+        except ValueError as exc:
+            raise HTTPException(status_code=404, detail=str(exc)) from exc
+
     @app.get("/api/trading")
     def trading() -> dict[str, object]:
         return service.get_trading_overview()

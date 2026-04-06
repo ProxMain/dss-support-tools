@@ -1,0 +1,291 @@
+{
+  "difficultyThresholds": {
+    "extreme": {
+      "resistanceMin": 0.9,
+      "instabilityMin": 900,
+      "explosionMin": 200,
+      "label": "Extreme",
+      "summary": "Volatile or high-resistance target. Expect narrow windows and punish mistakes."
+    },
+    "advanced": {
+      "resistanceMin": 0.6,
+      "instabilityMin": 400,
+      "explosionMin": 100,
+      "label": "Advanced",
+      "summary": "Bring a tuned ship loadout. Solo mining is possible but less forgiving."
+    },
+    "standard": {
+      "label": "Standard",
+      "summary": "Routine mining target. Starter and solo setups can work if the rock mass is reasonable."
+    }
+  },
+  "scanFrequencyReference": {
+    "C-Type": {
+      "signature": "1700 / 3400",
+      "note": "Community-observed C-Type returns often show around 1700, with higher multiples commonly indicating clusters."
+    },
+    "E-Type": {
+      "signature": "1870 / 1900 / 5700",
+      "note": "Community-observed E-Type returns are commonly reported around 1870-1900, with 5700 often treated as an E-Type cluster multiple."
+    },
+    "I-Type": {
+      "signature": "1660",
+      "note": "Ice-specific return reported by miners for I-Type rocks; treat as ice-only guidance."
+    },
+    "M-Type": {
+      "signature": "1850 / 5550",
+      "note": "M-Type often appears around 1850, with 5550 treated as a likely cluster multiple."
+    },
+    "P-Type": {
+      "signature": "1750 / 5250",
+      "note": "P-Type is commonly associated with 1750, with 5250 treated as a cluster multiple."
+    },
+    "Q-Type": {
+      "signature": "1870",
+      "note": "Q-Type is often tracked around 1870 in community mining references."
+    },
+    "S-Type": {
+      "signature": "1720",
+      "note": "S-Type is commonly reported around 1720 in community observations."
+    }
+  },
+  "shipConfig": {
+    "golem": {
+      "label": "Starter Golem",
+      "vehicle": "Drake Golem",
+      "summary": "Entry-level ship miner for learning scan discipline, easier rocks, and short solo runs.",
+      "capability": "starter",
+      "cargoScu": 32,
+      "radar": "Surveyor-Lite industrial radar",
+      "heads": ["Pitman Mining Laser"],
+      "modules": ["2 module slots on the Pitman head", "Keep the stock starter fit until you learn your scan thresholds"],
+      "gadgets": ["Okunis", "WaveShift"],
+      "scanWorkflow": [
+        "Ping wide, then slow down and rescan once a contact resolves into a single ship-mining rock or small cluster.",
+        "Detailed scan every rock before you touch the laser. Walk away from high resistance, high instability, or ugly mass.",
+        "Prioritize easy cracks and volume. The Golem is strongest when you skip bad rocks quickly instead of forcing them."
+      ],
+      "targetRocks": {
+        "prioritize": ["C-Type", "Q-Type", "S-Type"],
+        "conditional": ["E-Type on lighter rocks with manageable detailed-scan values"],
+        "avoid": ["M-Type", "P-Type", "volatile Quantanium-style rocks", "FPS and ROC nodes"]
+      },
+      "cannotMine": [
+        "Do not plan the Golem around hard M/P rocks or big volatile rocks.",
+        "Skip ROC and hand-mining nodes entirely. This page is only for ship-mining targets."
+      ]
+    },
+    "prospector": {
+      "label": "Solo Prospector",
+      "vehicle": "MISC Prospector",
+      "summary": "Best all-around solo mining ship for real throughput, tuned loadouts, and refinery-backed loops.",
+      "capability": "solo",
+      "cargoScu": 32,
+      "radar": "Surveyor-Lite industrial radar",
+      "heads": ["Helix I Mining Laser"],
+      "modules": ["Rieger-C3 Module", "Focus III Module", "Carry Surge and Stampede as situational swaps"],
+      "gadgets": ["WaveShift", "BoreMax", "Okunis"],
+      "scanWorkflow": [
+        "Use broad ping sweeps first, then commit only after the detailed scan shows workable resistance, instability, and mass.",
+        "Prioritize stable solo cracks. If the rock only looks possible with perfect execution, skip it and keep moving.",
+        "For volatile ore, crack efficiently and transition to collection/refinery routing without wasting time on marginal rocks."
+      ],
+      "targetRocks": {
+        "prioritize": ["C-Type", "Q-Type", "S-Type", "E-Type"],
+        "conditional": ["M-Type", "P-Type", "Quantanium-style volatile rocks when mass is manageable"],
+        "avoid": ["FPS and ROC nodes", "oversized extreme rocks that clearly need crew support"]
+      },
+      "cannotMine": [
+        "A Prospector can technically touch more than it should. The hard stop is detailed-scan viability, not the resource name.",
+        "If the rock needs gadgets, perfect timing, and luck just to crack, that is usually MOLE work instead."
+      ]
+    },
+    "mole": {
+      "label": "Crew MOLE",
+      "vehicle": "ARGO MOLE",
+      "summary": "Crew-optimized mining platform for hard rocks, mixed beam support, and heavy refinery runs.",
+      "capability": "crew",
+      "cargoScu": 96,
+      "radar": "Surveyor industrial radar",
+      "heads": ["Arbor MH2 for stable baseline", "Lancet MH2 as support / extra power"],
+      "modules": ["Focus III Module", "Rieger-C3 Module", "Carry Surge and Stampede for hard fractures"],
+      "gadgets": ["BoreMax", "WaveShift", "Okunis"],
+      "scanWorkflow": [
+        "Use the pilot scan pass to find candidate clusters, then detailed scan before assigning turret roles.",
+        "Split responsibilities: one turret keeps the rock stable while the support beam adds controlled power.",
+        "The MOLE is where you deliberately take on rocks a solo ship should skip, especially volatile or high-instability targets."
+      ],
+      "targetRocks": {
+        "prioritize": ["E-Type", "M-Type", "P-Type", "Q-Type", "S-Type", "C-Type", "Quantanium-style volatile rocks"],
+        "conditional": ["Ice-specific I-Type rocks when they fit the crew objective and location"],
+        "avoid": ["FPS and ROC nodes"]
+      },
+      "cannotMine": [
+        "The MOLE does not replace FPS or ROC mining. It is only for ship-mining deposits.",
+        "Small easy rocks are still mineable, but using a MOLE there is an efficiency choice, not a capability requirement."
+      ]
+    }
+  },
+  "decisionMatrix": {
+    "avoid": {
+      "stock": {
+        "allowed": false,
+        "label": "No",
+        "reason": "Do not plan this resource with the ship in its stock state."
+      },
+      "modules": {
+        "allowed": false,
+        "label": "No",
+        "reason": "Modules are not a reliable fix for this target on this ship.",
+        "items": [],
+        "usage": "Do not chase this with upgrades."
+      },
+      "gadgets": {
+        "allowed": false,
+        "label": "No",
+        "reason": "Gadgets do not make this a clean choice for this ship.",
+        "items": [],
+        "usage": "Use a better-matched ship instead."
+      },
+      "verdict": "Not Recommended"
+    },
+    "starter": {
+      "default": {
+        "stock": {
+          "allowed": true,
+          "label": "Yes",
+          "reason": "The stock Pitman setup is acceptable for this target if the detailed scan stays favorable."
+        },
+        "modules": {
+          "allowed": false,
+          "label": "No",
+          "reason": "No mandatory module change is needed for this target on the Golem.",
+          "items": [],
+          "usage": "Fly stock and skip bad scans."
+        },
+        "gadgets": {
+          "allowed": true,
+          "label": "Optional",
+          "reason": "Gadgets help only if the charge window feels tight.",
+          "items": ["Okunis", "WaveShift"],
+          "usage": "Use Okunis when charge control feels rough. Use WaveShift when the optimal window is too small."
+        },
+        "verdict": "Fly Stock"
+      }
+    },
+    "solo": {
+      "standard": {
+        "stock": {
+          "allowed": true,
+          "label": "Yes",
+          "reason": "The stock Arbor MH1 Prospector setup is workable for this target."
+        },
+        "modules": {
+          "allowed": false,
+          "label": "No",
+          "reason": "You do not need upgrades to make this a valid target.",
+          "items": [],
+          "usage": "Upgrades improve margin, not baseline viability."
+        },
+        "gadgets": {
+          "allowed": true,
+          "label": "Optional",
+          "reason": "Only bring gadgets if you want extra safety or cleaner control.",
+          "items": ["Okunis", "WaveShift"],
+          "usage": "Use Okunis for easier control. Use WaveShift if the window feels narrow."
+        },
+        "verdict": "Stock Works"
+      },
+      "default": {
+        "stock": {
+          "allowed": false,
+          "label": "No",
+          "reason": "Stock Prospector is not the right answer for this target."
+        },
+        "modules": {
+          "allowed": true,
+          "label": "Yes",
+          "reason": "A tuned laser setup is the minimum upgrade path.",
+          "items": ["Helix I Mining Laser", "Rieger-C3 Module", "Focus III Module"],
+          "usage": "Swap to Helix I, fit Rieger-C3 and Focus III, then reassess with the detailed scan before starting the crack."
+        },
+        "gadgets": {
+          "allowed": true,
+          "label": "Yes",
+          "reason": "Use gadgets when the upgraded fit still needs help stabilizing the crack.",
+          "items": ["WaveShift", "BoreMax", "Okunis"],
+          "usage": "Use WaveShift when the green zone is too small. Use BoreMax on unstable rocks. Use Okunis if charge control still feels rough."
+        },
+        "verdict": "Upgrade Required"
+      }
+    },
+    "crew": {
+      "extreme": {
+        "stock": {
+          "allowed": true,
+          "label": "Yes",
+          "reason": "A stock MOLE can attempt this, but it is a crew job and not a casual solo target."
+        },
+        "modules": {
+          "allowed": true,
+          "label": "Recommended",
+          "reason": "Upgrades make the crack materially safer and more controllable.",
+          "items": ["Focus III Module", "Rieger-C3 Module"],
+          "usage": "Fit these on the working head to improve control before you add more power."
+        },
+        "gadgets": {
+          "allowed": true,
+          "label": "Yes",
+          "reason": "Gadgets are the normal mitigation path on the hardest rocks.",
+          "items": ["BoreMax", "WaveShift", "Okunis"],
+          "usage": "Place BoreMax on unstable rocks. Use WaveShift to widen the window. Use Okunis if the crew still struggles to hold the bar cleanly."
+        },
+        "verdict": "Crew Ship, Upgrades Recommended"
+      },
+      "default": {
+        "stock": {
+          "allowed": true,
+          "label": "Yes",
+          "reason": "The stock Arbor MH2 MOLE setup is valid for this target with crew discipline."
+        },
+        "modules": {
+          "allowed": true,
+          "label": "Optional",
+          "reason": "Modules improve control and throughput but are not mandatory for baseline viability.",
+          "items": ["Focus III Module", "Rieger-C3 Module"],
+          "usage": "Fit these if you want a safer, more forgiving crack."
+        },
+        "gadgets": {
+          "allowed": true,
+          "label": "Optional",
+          "reason": "Use gadgets only when the detailed scan shows the rock is trending unstable or tight.",
+          "items": ["BoreMax", "WaveShift"],
+          "usage": "Use BoreMax for instability. Use WaveShift for a narrow charge window."
+        },
+        "verdict": "Stock Works"
+      }
+    },
+    "unknown": {
+      "stock": {
+        "allowed": false,
+        "label": "Unknown",
+        "reason": "Unknown"
+      },
+      "modules": {
+        "allowed": false,
+        "label": "Unknown",
+        "reason": "Unknown",
+        "items": [],
+        "usage": "Unknown"
+      },
+      "gadgets": {
+        "allowed": false,
+        "label": "Unknown",
+        "reason": "Unknown",
+        "items": [],
+        "usage": "Unknown"
+      },
+      "verdict": "Unknown"
+    }
+  }
+}

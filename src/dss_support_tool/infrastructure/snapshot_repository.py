@@ -26,7 +26,7 @@ class SnapshotRepository:
         return self._paths.scraper_data_root
 
     def latest_crafting_snapshot_path(self) -> Path:
-        return self._latest_snapshot("normalized-*.json", "crafting", exclude_prefixes=("normalized-scmdb-",))
+        return self._latest_snapshot("normalized-live*.json", "crafting")
 
     def latest_resource_snapshot_path(self) -> Path:
         return self._latest_snapshot("normalized-scmdb-mining-*.json", "resource")

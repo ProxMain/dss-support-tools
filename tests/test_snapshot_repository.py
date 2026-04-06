@@ -17,7 +17,7 @@ def test_repository_raises_when_snapshot_missing(app_paths) -> None:
 
 def test_repository_raises_when_snapshot_is_invalid_json(app_paths) -> None:
     repository = SnapshotRepository(app_paths)
-    invalid_path = app_paths.scraper_data_root / "normalized-test.json"
+    invalid_path = app_paths.scraper_data_root / "normalized-live-test.json"
     invalid_path.write_text("{not-json", encoding="utf-8")
 
     with pytest.raises(SnapshotFormatError):
@@ -25,8 +25,8 @@ def test_repository_raises_when_snapshot_is_invalid_json(app_paths) -> None:
 
 
 def test_repository_picks_latest_snapshot(app_paths, sample_crafting_payload) -> None:
-    old_path = app_paths.scraper_data_root / "normalized-old.json"
-    latest_path = app_paths.scraper_data_root / "normalized-new.json"
+    old_path = app_paths.scraper_data_root / "normalized-live-old.json"
+    latest_path = app_paths.scraper_data_root / "normalized-live-new.json"
     write_json(old_path, {**sample_crafting_payload, "version": "old"})
     write_json(latest_path, {**sample_crafting_payload, "version": "new"})
 
@@ -36,6 +36,24 @@ def test_repository_picks_latest_snapshot(app_paths, sample_crafting_payload) ->
 
     assert snapshot.version == "new"
     assert snapshot.path == latest_path
+
+
+def test_repository_ignores_trading_snapshot_when_loading_crafting(
+    app_paths,
+    sample_crafting_payload,
+    sample_trading_payload,
+) -> None:
+    crafting_path = app_paths.scraper_data_root / "normalized-live.json"
+    trading_path = app_paths.scraper_data_root / "normalized-sc-trade-public.json"
+    write_json(crafting_path, sample_crafting_payload)
+    write_json(trading_path, sample_trading_payload)
+
+    repository = SnapshotRepository(app_paths)
+
+    snapshot = repository.load_crafting_snapshot()
+
+    assert snapshot.path == crafting_path
+    assert snapshot.payload.get("blueprints")
 
 
 def test_repository_loads_latest_trading_snapshot(app_paths, sample_trading_payload) -> None:

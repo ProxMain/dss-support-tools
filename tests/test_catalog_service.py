@@ -7,7 +7,7 @@ from tests.helpers import write_json
 
 
 def test_catalog_service_builds_crafting_index(app_paths, sample_crafting_payload) -> None:
-    write_json(app_paths.scraper_data_root / "normalized-test.json", sample_crafting_payload)
+    write_json(app_paths.scraper_data_root / "normalized-live-test.json", sample_crafting_payload)
     service = CatalogService(SnapshotRepository(app_paths))
 
     payload = service.get_crafting_index()
@@ -22,10 +22,12 @@ def test_catalog_service_builds_resource_index(app_paths, sample_resource_payloa
     service = CatalogService(SnapshotRepository(app_paths))
 
     payload = service.get_resource_index()
+    detail = service.get_resource_data()
 
     assert payload["version"] == "mining-v1"
     assert payload["resourceCount"] == 1
     assert payload["families"][0]["id"] == "mining"
+    assert detail["families"][0]["resources"][0]["preparation"]["difficulty"]["level"] == "standard"
 
 
 def test_catalog_service_appends_trading_family_when_snapshot_exists(

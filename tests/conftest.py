@@ -33,6 +33,7 @@ def sample_crafting_payload() -> dict:
         "resources": [
             {
                 "id": "iron",
+                "guid": "iron",
                 "name": "Iron",
                 "unit": "ore",
                 "miningLocations": [{"system": "Stanton", "planet": "Daymar", "name": "Cave"}],

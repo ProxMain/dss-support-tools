@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from typing import Any
 
+from dss_support_tool.application.mining_preparation import build_mining_preparation
 from dss_support_tool.application.trading_catalog import build_trading_family
 from dss_support_tool.infrastructure.snapshot_repository import SnapshotSummary
 
@@ -65,6 +66,7 @@ def build_resource_data(
                 "stats": resource.get("stats") or {},
                 "qualityProfile": resource.get("qualityProfile"),
                 "locations": resource.get("locations") or [],
+                "preparation": build_mining_preparation(resource),
             }
         )
 

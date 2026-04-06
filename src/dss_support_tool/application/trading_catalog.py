@@ -167,10 +167,7 @@ def _build_location_refs(
         for listing in listings
         if isinstance(listing, dict) and listing.get("commodityId") == commodity.get("id")
     ]
-    if listing_refs:
-        return listing_refs
-
-    return [
+    static_refs = [
         {
             "locationId": None,
             "locationName": location_name,
@@ -187,6 +184,7 @@ def _build_location_refs(
         }
         for location_name in commodity.get("locationNames", []) or []
     ]
+    return _dedupe_location_refs([*listing_refs, *static_refs])
 
 
 def _commodity_has_bounty(commodity: dict[str, Any], bounties: list[Any]) -> bool:
@@ -197,3 +195,15 @@ def _commodity_has_bounty(commodity: dict[str, Any], bounties: list[Any]) -> boo
         if isinstance(bounty, dict) and bounty.get("locationName")
     }
     return bool(commodity_locations & bounty_locations)
+
+
+def _dedupe_location_refs(locations: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    seen: set[str] = set()
+    output: list[dict[str, Any]] = []
+    for location in locations:
+        key = str(location.get("locationName") or "").strip().lower()
+        if key in seen:
+            continue
+        seen.add(key)
+        output.append(location)
+    return output
