@@ -21,6 +21,7 @@ Write-Host "Building DSS Support Tool executables..."
   --hidden-import PySide6 `
   --hidden-import PySide6.QtWebEngineWidgets `
   --add-data "src\dss_support_tool\static;dss_support_tool\static" `
+  --add-data "src\dss_support_tool\data;dss_support_tool\data" `
   --add-data "img\space-seals-app-icon.png;dss_support_tool\assets" `
   --add-data "..\langpack-browser\dist;dss_support_tool\langpack_dist" `
   --add-data "..\tool-scraper\data;tool-scraper\data" `
@@ -40,6 +41,7 @@ if ($LASTEXITCODE -ne 0) {
   --hidden-import PySide6 `
   --hidden-import PySide6.QtWebEngineWidgets `
   --add-data "src\dss_support_tool\static;dss_support_tool\static" `
+  --add-data "src\dss_support_tool\data;dss_support_tool\data" `
   --add-data "img\space-seals-app-icon.png;dss_support_tool\assets" `
   --add-data "..\langpack-browser\dist;dss_support_tool\langpack_dist" `
   --add-data "..\tool-scraper\data;tool-scraper\data" `

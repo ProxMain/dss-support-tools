@@ -9,7 +9,7 @@ a = Analysis(
     ['src\\dss_support_tool\\desktop.py'],
     pathex=[],
     binaries=[],
-    datas=[('src\\dss_support_tool\\static', 'dss_support_tool\\static'), ('img\\space-seals-app-icon.png', 'dss_support_tool\\assets'), ('..\\langpack-browser\\dist', 'dss_support_tool\\langpack_dist'), ('..\\tool-scraper\\data', 'tool-scraper\\data')],
+    datas=[('src\\dss_support_tool\\static', 'dss_support_tool\\static'), ('src\\dss_support_tool\\data', 'dss_support_tool\\data'), ('img\\space-seals-app-icon.png', 'dss_support_tool\\assets'), ('..\\langpack-browser\\dist', 'dss_support_tool\\langpack_dist'), ('..\\tool-scraper\\data', 'tool-scraper\\data')],
     hiddenimports=hiddenimports,
     hookspath=[],
     hooksconfig={},
