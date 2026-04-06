@@ -26,10 +26,13 @@ class SnapshotRepository:
         return self._paths.scraper_data_root
 
     def latest_crafting_snapshot_path(self) -> Path:
-        return self._latest_snapshot("normalized-*.json", "crafting", exclude_prefixes=("normalized-scmdb-",))
+        return self._latest_snapshot("normalized-live*.json", "crafting")
 
     def latest_resource_snapshot_path(self) -> Path:
         return self._latest_snapshot("normalized-scmdb-mining-*.json", "resource")
+
+    def latest_trading_snapshot_path(self) -> Path:
+        return self._latest_snapshot("normalized-sc-trade-*.json", "trading")
 
     def load_crafting_snapshot(self) -> SnapshotSummary:
         path = self.latest_crafting_snapshot_path()
@@ -50,6 +53,22 @@ class SnapshotRepository:
             path=path,
             payload=payload,
         )
+
+    def load_trading_snapshot(self) -> SnapshotSummary:
+        path = self.latest_trading_snapshot_path()
+        payload = self._read_json(path, "trading")
+        return SnapshotSummary(
+            source="sc-trade normalized export",
+            version=payload.get("apiVersion") or payload.get("version"),
+            path=path,
+            payload=payload,
+        )
+
+    def maybe_load_trading_snapshot(self) -> SnapshotSummary | None:
+        try:
+            return self.load_trading_snapshot()
+        except SnapshotNotFoundError:
+            return None
 
     def _latest_snapshot(
         self,

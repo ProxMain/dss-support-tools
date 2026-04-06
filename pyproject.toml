@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "dss-support-tool"
-version = "0.1.0"
+version = "0.2.0"
 description = "Desktop and web support tool for Star Citizen DSS workflows."
 readme = "README.md"
 requires-python = ">=3.11"
@@ -32,7 +32,7 @@ dss-support-tray = "dss_support_tool.tray:main"
 package-dir = {"" = "src"}
 
 [tool.setuptools.package-data]
-dss_support_tool = ["static/*.html", "static/*.png"]
+dss_support_tool = ["static/*.html", "static/*.png", "data/*.json"]
 
 [tool.setuptools.packages.find]
 where = ["src"]

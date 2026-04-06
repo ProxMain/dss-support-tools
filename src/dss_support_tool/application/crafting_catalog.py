@@ -3,16 +3,21 @@ from __future__ import annotations
 import re
 from typing import Any
 
+from dss_support_tool.application.mining_preparation import build_mining_preparation
 from dss_support_tool.infrastructure.snapshot_repository import SnapshotSummary
 
 
-def build_crafting_data(snapshot: SnapshotSummary) -> dict[str, Any]:
+def build_crafting_data(
+    snapshot: SnapshotSummary,
+    mining_snapshot: SnapshotSummary | None = None,
+) -> dict[str, Any]:
     payload = snapshot.payload or {}
     resource_map = {
         str(resource.get("id")): resource
         for resource in payload.get("resources", [])
         if isinstance(resource, dict) and resource.get("id")
     }
+    mining_resource_map = _build_mining_resource_map(mining_snapshot.payload if mining_snapshot else {})
 
     grouped: dict[str, dict[str, Any]] = {}
     for blueprint in payload.get("blueprints", []) or []:
@@ -44,7 +49,7 @@ def build_crafting_data(snapshot: SnapshotSummary) -> dict[str, Any]:
                 "systems": blueprint.get("systems") or [],
                 "blueprintSources": _build_blueprint_sources(blueprint),
                 "alternativeSources": [],
-                "resourceLeads": _build_resource_leads(blueprint, resource_map),
+                "resourceLeads": _build_resource_leads(blueprint, resource_map, mining_resource_map),
                 "notes": _build_notes(blueprint),
             }
         )
@@ -168,7 +173,11 @@ def _build_blueprint_sources(blueprint: dict[str, Any]) -> list[dict[str, Any]]:
     return sources
 
 
-def _build_resource_leads(blueprint: dict[str, Any], resource_map: dict[str, dict[str, Any]]) -> list[dict[str, Any]]:
+def _build_resource_leads(
+    blueprint: dict[str, Any],
+    resource_map: dict[str, dict[str, Any]],
+    mining_resource_map: dict[str, dict[str, Any]],
+) -> list[dict[str, Any]]:
     leads: list[dict[str, Any]] = []
     for slot in blueprint.get("ingredientSlots", []) or []:
         if not isinstance(slot, dict):
@@ -183,14 +192,79 @@ def _build_resource_leads(blueprint: dict[str, Any], resource_map: dict[str, dic
             text = " / ".join([str(location.get(key)) for key in ("system", "planet", "name") if location.get(key)])
             if text:
                 locations.append(text)
+        mining_match = _lookup_mining_resource(mining_resource_map, resource)
         leads.append(
             {
                 "material": resource.get("name") or "Unknown Resource",
                 "type": resource.get("unit") or "resource",
                 "locations": locations,
+                "mining": _build_resource_mining_summary(mining_match),
             }
         )
     return leads
+
+
+def _build_mining_resource_map(payload: dict[str, Any]) -> dict[str, dict[str, Any]]:
+    resource_map: dict[str, dict[str, Any]] = {}
+    for resource in payload.get("resources", []) or []:
+        if not isinstance(resource, dict):
+            continue
+        name = _normalize_resource_key(resource.get("name"))
+        resource_id = _normalize_resource_key(resource.get("id"))
+        if name:
+            resource_map[name] = resource
+        if resource_id and resource_id not in resource_map:
+            resource_map[resource_id] = resource
+    return resource_map
+
+
+def _lookup_mining_resource(
+    mining_resource_map: dict[str, dict[str, Any]],
+    crafting_resource: dict[str, Any],
+) -> dict[str, Any] | None:
+    keys = [
+        _normalize_resource_key(crafting_resource.get("name")),
+        _normalize_resource_key(crafting_resource.get("id")),
+        _normalize_resource_key(crafting_resource.get("guid")),
+    ]
+    for key in keys:
+        if key and key in mining_resource_map:
+            return mining_resource_map[key]
+    return None
+
+
+def _build_resource_mining_summary(resource: dict[str, Any] | None) -> dict[str, Any] | None:
+    if not isinstance(resource, dict):
+        return None
+    preparation = build_mining_preparation(resource)
+    if not preparation:
+        return None
+
+    loadouts = {
+        loadout.get("id"): loadout
+        for loadout in preparation.get("recommendedLoadouts", []) or []
+        if isinstance(loadout, dict) and loadout.get("id")
+    }
+    minimal = preparation.get("minimalRequired") or {}
+
+    return {
+        "minimal": minimal.get("vehicle") or minimal.get("tool") or "Unknown",
+        "starter": _short_vehicle(loadouts.get("golem")) or _short_vehicle(minimal),
+        "solo": _short_vehicle(loadouts.get("prospector")) or _short_vehicle(minimal),
+        "crew": _short_vehicle(loadouts.get("mole")),
+        "headline": preparation.get("scanning", {}).get("headline") or "Detailed scan the rock before you commit.",
+    }
+
+
+def _short_vehicle(loadout: dict[str, Any] | None) -> str | None:
+    if not isinstance(loadout, dict):
+        return None
+    return str(loadout.get("vehicle") or "").strip() or None
+
+
+def _normalize_resource_key(value: Any) -> str:
+    text = str(value or "").strip().lower()
+    return text.replace(" ", "").replace("-", "").replace("_", "")
 
 
 def _build_notes(blueprint: dict[str, Any]) -> list[str]:
