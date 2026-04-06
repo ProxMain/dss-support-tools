@@ -1,11 +1,12 @@
 [Setup]
 AppName=DSS Support Tool
 AppVersion=0.2.0
+AppVerName=DSS Support Tool 0.2.0
 AppPublisher=Space Seals
 DefaultDirName={autopf}\DSS Support Tool
 DefaultGroupName=DSS Support Tool
 OutputDir=output
-OutputBaseFilename=dss-support-tool-setup
+OutputBaseFilename=dss-support-tool-setup-0.2.0
 Compression=lzma
 SolidCompression=yes
 WizardStyle=modern

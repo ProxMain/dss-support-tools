@@ -2,6 +2,7 @@ $ErrorActionPreference = "Stop"
 
 $root = Split-Path -Parent $PSScriptRoot
 Set-Location $root
+$version = "0.2.0"
 
 $desktopDist = Join-Path $root "dist\DSSSupportDesktop"
 $trayDist = Join-Path $root "dist\DSSSupportTray"
@@ -29,7 +30,7 @@ if (-not (Test-Path $isccPath)) {
 
 & $isccPath $installerScript
 
-$targetExe = Join-Path $outputRoot "dss-support-tool-setup.exe"
+$targetExe = Join-Path $outputRoot "dss-support-tool-setup-$version.exe"
 if (-not (Test-Path $targetExe)) {
   throw "Installer build did not produce $targetExe"
 }
